@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+
+    "name":         "Console capture",
+    "description":  "Capture the console in Firefox",
+    "version":      "0.1",
+    "applications": {
+        "gecko": {
+            "id":   "console_capture@pas.com"
+        }
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["capture_console.js"]
+        }
+    ]
+}
