@@ -10,6 +10,8 @@
                 console.original.log(console.capture.get());
                 console.log('test');
                 console.warn({test: false});
+                console.error(new Error());
+                console.log(console);
                 console.original.log(console.capture.get());
                 console.capture.clear();
                 console.original.log(console.capture.get());
