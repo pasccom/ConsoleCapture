@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <meta charset='utf-8' />
+        <title>Test</title>
+    </head>
+    <body>
+        <p id="test">Click</p>
+        <script>
+            document.getElementById('test').addEventListener('click', () => {
+                console.original.log(console.get());
+                console.log('test');
+                console.warn({test: false});
+                console.original.log(console.get());
+            });
+        </script>
+    </body>
+</html>
