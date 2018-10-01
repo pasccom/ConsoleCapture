@@ -1,3 +1,12 @@
+/*!
+ * \brief Capture calls to an object
+ *
+ * Capture every call to an object members.
+ * The object must be a children of window object
+ * and all its members MUST be functions.
+ * The original functions are still available using `.original`
+ * \param objName The name of the object to capture.
+ */
 function capture(objName) {
     var captured = [];
 
