@@ -12,8 +12,13 @@ function capture(objName) {
 
     var obj = window[objName];
     var newObj = {
-        get: function() {
-            return cloneInto(captured, window);
+        capture: {
+            get: () => {
+                return cloneInto(captured, window);
+            },
+            clear: () => {
+                captured = [];
+            },
         },
         original: {},
     };

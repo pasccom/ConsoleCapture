@@ -7,10 +7,12 @@
         <p id="test">Click</p>
         <script>
             document.getElementById('test').addEventListener('click', () => {
-                console.original.log(console.get());
+                console.original.log(console.capture.get());
                 console.log('test');
                 console.warn({test: false});
-                console.original.log(console.get());
+                console.original.log(console.capture.get());
+                console.capture.clear();
+                console.original.log(console.capture.get());
             });
         </script>
     </body>
