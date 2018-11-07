@@ -1,1 +1,9 @@
+# Directories to ignore:
 dist/
+env/
+__pycache__/
+
+# Local setting files:
+*.local
+# Log files:
+*.log
