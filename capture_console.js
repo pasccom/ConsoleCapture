@@ -19,7 +19,7 @@ function capture(objName)
         if (isA(value, 'Arguments')) {
             return Array.prototype.map.call(value, clean);
         } else if (isA(value, 'Array')) {
-            return value.map(value.clean);
+            return value.map(clean);
         } else if (isA(value, 'Boolean') || isA(value, 'Number') || isA(value, 'String')) {
             return value;
         } else if (isA(value, 'Function')) {
