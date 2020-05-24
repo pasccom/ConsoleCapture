@@ -17,7 +17,7 @@
 
 from selenium import webdriver
 from selenium.common import exceptions as selenium
-from PythonUtils.testdata import testData
+from PythonUtils.testdata import TestData
 
 import os
 import time
@@ -115,7 +115,7 @@ class BaseTest(BrowserTestCase):
     lineNumber = 1
     columnNumber = 1
 
-    @testData([
+    @TestData([
         {'title': 'log1',   'function': 'log',   'data': ['OK']                        },
         {'title': 'warn1',  'function': 'warn',  'data': ['OK']                        },
         {'title': 'error1', 'function': 'error', 'data': ['OK']                        },
@@ -143,7 +143,7 @@ class BaseTest(BrowserTestCase):
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], function, result, beforeTime, afterTime)
 
-    @testData([
+    @TestData([
         {'title': 'log 0',           'data': [0]      },
         {'title': 'log 1',           'data': [1]      },
         {'title': 'log -1',          'data': [-1]     },
@@ -173,7 +173,7 @@ class BaseTest(BrowserTestCase):
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
-    @testData([
+    @TestData([
         {'title': 'log 1+1',                   'formula': ['1+1'],                     'result': [2]      },
         {'title': 'log 1-1',                   'formula': ['1-1'],                     'result': [0]      },
         {'title': 'log 1*1',                   'formula': ['1*1'],                     'result': [1]      },
@@ -197,7 +197,7 @@ class BaseTest(BrowserTestCase):
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
-    @testData([
+    @TestData([
         {'title': 'log []',                         'formula': ['[]'],                         'result': [[]]                        },
         {'title': 'log [1]',                        'formula': ['[1]'],                        'result': [[1]]                       },
         {'title': 'log [1, 2]',                     'formula': ['[1, 2]'],                     'result': [[1, 2]]                    },
@@ -222,7 +222,7 @@ class BaseTest(BrowserTestCase):
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
-    @testData([
+    @TestData([
         {'title': 'log {}',                                         'formula': ['{}'],                                         'result': [{}]                                                },
         {'title': 'log {a: 1}',                                     'formula': ['{a: 1}'],                                     'result': [{'a': 1}]                                          },
         {'title': 'log {a: 1, b: 2}',                               'formula': ['{a: 1, b: 2}'],                               'result': [{'a': 1, 'b': 2}]                                  },
@@ -247,7 +247,7 @@ class BaseTest(BrowserTestCase):
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
-    @testData([
+    @TestData([
         {'title': 'log lambda()',              'formula': ['() => {return 0;}'],                            'result': ['function()']  },
         {'title': 'log lambda(x)',             'formula': ['(x) => {return x;}'],                           'result': ['function()']  },
         {'title': 'log function()',            'formula': ['function() {return 0;}'],                       'result': ['function()']  },
