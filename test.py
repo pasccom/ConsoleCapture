@@ -270,6 +270,7 @@ class BaseTest(BrowserTestCase):
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
 class ExecuteScriptTest(BaseTest, metaclass=TestCase):
+    lineNumber = 2
     columnNumber = 15
 
     def init(self, *args, **kwargs):
@@ -284,14 +285,14 @@ class ExecuteScriptTest(BaseTest, metaclass=TestCase):
         self.browser.execute_script('console.{}({});'.format(function, ', '.join(data)))
 
 class ExecuteFunctionTest(BaseTest, metaclass=TestCase):
-    javascript = """<script>
+    javascript = """<script type="text/javascript">
         function fun() {{
             {}
         }}
     </script>"""
     caller = 'fun'
     lineNumber = 10
-    columnNumber = 13
+    columnNumber = 21
 
     def init(self, *args, **kwargs):
         data = args[0]
@@ -307,7 +308,7 @@ class ExecuteFileTest(BaseTest, metaclass=TestCase):
     caller = 'fun'
     fileName = 'test/test_script.js'
     lineNumber = 2
-    columnNumber = 17
+    columnNumber = 25
 
     def init(self, *args, **kwargs):
         data = args[0]
@@ -330,7 +331,7 @@ class ClickTest(BaseTest, metaclass=TestCase):
         document.getElementById('test').addEventListener('click', () => {{{}}});
     </script>"""
     lineNumber = 9
-    columnNumber = 74
+    columnNumber = 82
 
     def init(self, *args, **kwargs):
         data = args[0]
@@ -343,7 +344,7 @@ class ClickTest(BaseTest, metaclass=TestCase):
         self.browser.find_element_by_id('test').click()
 
 class ClickFunctionTest(BaseTest, metaclass=TestCase):
-    javascript = """<script>
+    javascript = """<script type="text/javascript">
         function clickEvent() {{
             {}
         }}
@@ -351,7 +352,7 @@ class ClickFunctionTest(BaseTest, metaclass=TestCase):
     </script>"""
     caller = 'clickEvent'
     lineNumber = 10
-    columnNumber = 13
+    columnNumber = 21
 
     def init(self, *args, **kwargs):
         data = args[0]
@@ -367,7 +368,7 @@ class ClickFileTest(BaseTest, metaclass=TestCase):
     caller = 'clickEvent'
     fileName = 'test/test_script.js'
     lineNumber = 2
-    columnNumber = 17
+    columnNumber = 25
 
     def init(self, *args, **kwargs):
         data = args[0]
