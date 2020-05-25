@@ -3,7 +3,11 @@ dist/
 env/
 __pycache__/
 
+# Sphinx auto-generated folders:
+doc/_*/
+
 # Local setting files:
 *.local
+
 # Log files:
 *.log
