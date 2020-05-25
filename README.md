@@ -44,6 +44,26 @@ allows to easily build the extension into an `*.xpi` file.
 *WARNING:* The extension is unsigned, hence you have to ensure that the preference
 `xpinstall.signatures.required` is set to `false`.
 
+BUILDING DOCUMENTATION
+----------------------
+
+The documentation of the helper included in ConsoleCapture is provided as
+Sphinx reStructuredText, which can be compiled into beatiful documentation
+by [Sphinx](http://www.sphinx-doc.org).
+
+To compile the documentation you have to install Sphinx, which can be done using
+```
+pip install -U sphinx
+```
+If you are using Unix, you will also need `make`, which is generally provided
+by default.
+
+Then `cd` into the `doc` subdirectory and run e.g.
+```
+make html
+```
+to generate HTML documentation. The documentation is output in `doc/_build` by default.
+
 LICENSING INFORMATION
 ---------------------
 These programs are free software: you can redistribute them and/or modify
