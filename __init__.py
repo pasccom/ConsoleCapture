@@ -1,4 +1,4 @@
-# Copyright 2018 Pascal COMBES <pascom@orange.fr>
+# Copyright 2020 Pascal COMBES <pascom@orange.fr>
 #
 # This file is part of ConsoleCapture.
 #
