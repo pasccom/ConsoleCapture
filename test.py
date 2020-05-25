@@ -2,22 +2,23 @@
 #
 # This file is part of ConsoleCapture.
 #
-# SolarProd is free software: you can redistribute it and/or modify
+# ConsoleCapture is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# SolarProd is distributed in the hope that it will be useful,
+# ConsoleCapture is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with SolarProd. If not, see <http://www.gnu.org/licenses/>
+# along with ConsoleCapture. If not, see <http://www.gnu.org/licenses/>
 
 from selenium import webdriver
 from selenium.common import exceptions as selenium
 from PythonUtils.testdata import TestData
+from console_capture import captureConsole
 
 import os
 import time
@@ -58,11 +59,8 @@ class BrowserTestCase(unittest.TestCase):
     def setUpClass(cls):
         cls.baseDir = os.path.dirname(os.path.abspath(__file__))
 
-        profile = webdriver.FirefoxProfile()
-        profile.set_preference('xpinstall.signatures.required', False)
-
-        cls.browser = webdriver.Firefox(profile)
-        print(cls.browser.install_addon(os.path.join(cls.baseDir, 'dist/console_capture.xpi'), False))
+        cls.browser = webdriver.Firefox(webdriver.FirefoxProfile())
+        captureConsole(cls.browser, os.path.join(cls.baseDir, 'dist/console_capture.xpi'))
 
     @classmethod
     def tearDownClass(cls):
@@ -72,7 +70,7 @@ class BrowserTestCase(unittest.TestCase):
     def waitConsoleCapture(browser, t=-1):
         while (t != 0):
             try:
-                browser.execute_script('console.capture.clear();')
+                browser.clearConsoleCapture()
                 return
             except(selenium.JavascriptException):
                 pass
@@ -132,14 +130,14 @@ class BaseTest(BrowserTestCase):
 
         self.init(data, function=function, title=title)
 
-        self.browser.execute_script('console.capture.clear();')
-        self.assertEqual(self.browser.execute_script('return console.capture.get();'), [])
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
 
         beforeTime = time.time()
         self.action(data, function=function)
         afterTime = time.time()
 
-        capture = self.browser.execute_script('return console.capture.get();')
+        capture = self.browser.getConsoleCapture()
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], function, result, beforeTime, afterTime)
 
@@ -162,14 +160,14 @@ class BaseTest(BrowserTestCase):
 
         self.init(data, title=title)
 
-        self.browser.execute_script('console.capture.clear();')
-        self.assertEqual(self.browser.execute_script('return console.capture.get();'), [])
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
 
         beforeTime = time.time()
         self.action(data)
         afterTime = time.time()
 
-        capture = self.browser.execute_script('return console.capture.get();')
+        capture = self.browser.getConsoleCapture()
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
@@ -186,14 +184,14 @@ class BaseTest(BrowserTestCase):
     def testFormulae(self, formula, result, title=''):
         self.init(formula, title=title)
 
-        self.browser.execute_script('console.capture.clear();')
-        self.assertEqual(self.browser.execute_script('return console.capture.get();'), [])
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
 
         beforeTime = time.time()
         self.action(formula)
         afterTime = time.time()
 
-        capture = self.browser.execute_script('return console.capture.get();')
+        capture = self.browser.getConsoleCapture()
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
@@ -211,14 +209,14 @@ class BaseTest(BrowserTestCase):
     def testArrays(self, formula, result, title=''):
         self.init(formula, title=title)
 
-        self.browser.execute_script('console.capture.clear();')
-        self.assertEqual(self.browser.execute_script('return console.capture.get();'), [])
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
 
         beforeTime = time.time()
         self.action(formula)
         afterTime = time.time()
 
-        capture = self.browser.execute_script('return console.capture.get();')
+        capture = self.browser.getConsoleCapture()
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
@@ -236,14 +234,14 @@ class BaseTest(BrowserTestCase):
     def testObjects(self, formula, result, title=''):
         self.init(formula, title=title)
 
-        self.browser.execute_script('console.capture.clear();')
-        self.assertEqual(self.browser.execute_script('return console.capture.get();'), [])
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
 
         beforeTime = time.time()
         self.action(formula)
         afterTime = time.time()
 
-        capture = self.browser.execute_script('return console.capture.get();')
+        capture = self.browser.getConsoleCapture()
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
@@ -258,14 +256,14 @@ class BaseTest(BrowserTestCase):
     def testFunctions(self, formula, result, title=''):
         self.init(formula, title=title)
 
-        self.browser.execute_script('console.capture.clear();')
-        self.assertEqual(self.browser.execute_script('return console.capture.get();'), [])
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
 
         beforeTime = time.time()
         self.action(formula)
         afterTime = time.time()
 
-        capture = self.browser.execute_script('return console.capture.get();')
+        capture = self.browser.getConsoleCapture()
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
 
