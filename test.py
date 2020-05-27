@@ -444,5 +444,41 @@ class ClickFileTest(BaseTest, metaclass=TestCase):
     def action(self, *args, **kwargs):
         self.browser.find_element_by_id('test').click()
 
+class DepthTest(BrowserTestCase, metaclass=TestCase):
+    @TestData([1, 10])
+    def testSetDepth(self, depth):
+        self.getIndex()
+        self.assertEqual(self.browser.captureDepth, 0)
+
+        self.browser.captureDepth = depth
+        self.assertEqual(self.browser.captureDepth, depth)
+
+        self.browser.captureDepth = 0
+        self.assertEqual(self.browser.captureDepth, 0)
+
+    @TestData(['v'])
+    def testInvalid(self, depth):
+        self.getIndex()
+
+        with self.assertRaises(NameError) as e:
+            self.browser.captureDepth = depth
+        self.assertEqual(e.exception.args[0], f"{depth} is not defined")
+
+    @TestData(['true', 'false', 'null', 'undefined', '"str"', '[]', '{}'])
+    def testInvalidType(self, depth):
+        self.getIndex()
+
+        with self.assertRaises(TypeError) as e:
+            self.browser.captureDepth = depth
+        self.assertEqual(e.exception.args[0], "Capure depth must be an integer")
+
+    @TestData([-1, -10])
+    def testInvalid(self, depth):
+        self.getIndex()
+
+        with self.assertRaises(ValueError) as e:
+            self.browser.captureDepth = depth
+        self.assertEqual(e.exception.args[0], "Capure depth must be non-negative")
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
