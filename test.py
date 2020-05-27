@@ -98,20 +98,27 @@ class BrowserTestCase(unittest.TestCase):
         self.browser.get(self.url)
         self.__class__.waitConsoleCapture(self.browser, 5)
 
-    def checkCapture(self, capture, callee, arguments, beforeTime, afterTime):
-        self.assertEqual(capture['callee'], callee)
-        self.assertEqual(capture['arguments'], arguments)
-        self.assertTrue((beforeTime <= capture['time']/1000) and (capture['time']/1000 <= afterTime))
-        self.assertEqual(capture['caller'], self.__class__.caller)
-        self.assertEqual(capture['fileName'], 'file://' + os.path.join(self.__class__.baseDir, self.__class__.fileName) if self.__class__.fileName is not None else self.url)
-        self.assertEqual(capture['lineNumber'], str(self.__class__.lineNumber))
-        self.assertEqual(capture['columnNumber'], str(self.__class__.columnNumber))
-
 class BaseTest(BrowserTestCase):
     caller = ''
     fileName = None
     lineNumber = 1
     columnNumber = 1
+
+    def checkArguments(self, capturedArguments, expectedArguments):
+        self.assertEqual(capturedArguments, expectedArguments)
+
+    def checkCapture(self, callee, beforeTime, afterTime):
+        capture = self.browser.getConsoleCapture()
+        self.assertEqual(len(capture), 1)
+
+        self.assertEqual(capture[0]['callee'], callee)
+        self.assertTrue((beforeTime <= capture[0]['time']/1000) and (capture[0]['time']/1000 <= afterTime))
+        self.assertEqual(capture[0]['caller'], self.__class__.caller)
+        self.assertEqual(capture[0]['fileName'], 'file://' + os.path.join(self.__class__.baseDir, self.__class__.fileName) if self.__class__.fileName is not None else self.url)
+        self.assertEqual(capture[0]['lineNumber'], str(self.__class__.lineNumber))
+        self.assertEqual(capture[0]['columnNumber'], str(self.__class__.columnNumber))
+
+        return capture[0]
 
     @TestData([
         {'title': 'log1',   'function': 'log',   'data': ['OK']                        },
@@ -137,9 +144,8 @@ class BaseTest(BrowserTestCase):
         self.action(data, function=function)
         afterTime = time.time()
 
-        capture = self.browser.getConsoleCapture()
-        self.assertEqual(len(capture), 1)
-        self.checkCapture(capture[0], function, result, beforeTime, afterTime)
+        capture = self.checkCapture(function, beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], result)
 
     def testNull(self):
         self.init(['null'], title='log null')
@@ -151,9 +157,8 @@ class BaseTest(BrowserTestCase):
         self.action(['null'])
         afterTime = time.time()
 
-        capture = self.browser.getConsoleCapture()
-        self.assertEqual(len(capture), 1)
-        self.checkCapture(capture[0], 'log', ['null'], beforeTime, afterTime)
+        capture = self.checkCapture('log', beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], ['null'])
 
     def testUndefined(self):
         self.init(['undefined'], title='log undefined')
@@ -165,9 +170,8 @@ class BaseTest(BrowserTestCase):
         self.action(['undefined'])
         afterTime = time.time()
 
-        capture = self.browser.getConsoleCapture()
-        self.assertEqual(len(capture), 1)
-        self.checkCapture(capture[0], 'log', ['undefined'], beforeTime, afterTime)
+        capture = self.checkCapture('log', beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], ['undefined'])
 
     @TestData([
         {'title': 'log 0',           'data': [0]      },
@@ -195,9 +199,8 @@ class BaseTest(BrowserTestCase):
         self.action(data)
         afterTime = time.time()
 
-        capture = self.browser.getConsoleCapture()
-        self.assertEqual(len(capture), 1)
-        self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
+        capture = self.checkCapture('log', beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], result)
 
     @TestData([
         {'title': 'log 1+1',                   'formula': ['1+1'],                     'result': [2]      },
@@ -219,9 +222,8 @@ class BaseTest(BrowserTestCase):
         self.action(formula)
         afterTime = time.time()
 
-        capture = self.browser.getConsoleCapture()
-        self.assertEqual(len(capture), 1)
-        self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
+        capture = self.checkCapture('log', beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], result)
 
     @TestData([
         {'title': 'log []',                         'formula': ['[]'],                         'result': [[]]                        },
@@ -244,9 +246,8 @@ class BaseTest(BrowserTestCase):
         self.action(formula)
         afterTime = time.time()
 
-        capture = self.browser.getConsoleCapture()
-        self.assertEqual(len(capture), 1)
-        self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
+        capture = self.checkCapture('log', beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], result)
 
     @TestData([
         {'title': 'log {}',                                         'formula': ['{}'],                                         'result': [{}]                                                },
@@ -269,9 +270,8 @@ class BaseTest(BrowserTestCase):
         self.action(formula)
         afterTime = time.time()
 
-        capture = self.browser.getConsoleCapture()
-        self.assertEqual(len(capture), 1)
-        self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
+        capture = self.checkCapture('log', beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], result)
 
     @TestData([
         {'title': 'log lambda()',              'formula': ['() => {return 0;}'],                            'result': ['function()']  },
@@ -291,9 +291,8 @@ class BaseTest(BrowserTestCase):
         self.action(formula)
         afterTime = time.time()
 
-        capture = self.browser.getConsoleCapture()
-        self.assertEqual(len(capture), 1)
-        self.checkCapture(capture[0], 'log', result, beforeTime, afterTime)
+        capture = self.checkCapture('log', beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], result)
 
 class ExecuteScriptTest(BaseTest, metaclass=TestCase):
     lineNumber = 2
