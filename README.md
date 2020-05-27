@@ -4,7 +4,8 @@ REPOSITORY DESCRIPTION
 This repository contains a small extension allowing to capture the console
 calls in Firefox. This allows Selenium to retrieve them. 
 The code is relatively generic and can easily be extended to capture calls
-to any object.
+to any object (see documentation in
+[console_capture.js](https://github.com/pasccom/ConsoleCapture/blob/master/console_capture.js).
 
 You can reuse it freely under the terms of the GPL version 3 (see the 
 LICENSE file of this repository, or below for a short note).
@@ -12,10 +13,12 @@ LICENSE file of this repository, or below for a short note).
 FEATURES
 --------
 
-Here is the list of the current features (included in version 0.1)
+Here is the list of the current features (included in version 1.0)
 - Capture calls to members with:
-  - Arguments
+  - Arguments (basic types, arrays and objects are supported)
   - Caller name, file, line and column
+- Configure capture depth for complex objects (to avoid recusion loops).
+- Python wrapper to be used with Selenium.
 
 Ideas I have to extend the functionalities of the page are listed
 [below](#future-developments)
@@ -51,8 +54,10 @@ The documentation of the helper included in ConsoleCapture is provided as
 Sphinx reStructuredText, which can be compiled into beatiful documentation
 by [Sphinx](http://www.sphinx-doc.org).
 
-To compile the documentation you have to install Sphinx, which can be done using
+To compile the documentation you have to install Sphinx in the `virtualenv`,
+which can be done using
 ```
+source env/bin/activate
 pip install -U sphinx
 ```
 If you are using Unix, you will also need `make`, which is generally provided
