@@ -32,20 +32,27 @@ function capture(objName)
         return Object.prototype.toString.call(value) == '[object ' + typeName + ']'
     }
 
-    function clean(value)
+    function clean(value, level)
     {
+        if (arguments.length == 1)
+            level = 0;
+
         if (isA(value, 'Arguments')) {
-            return Array.prototype.map.call(value, clean);
+            return Array.prototype.map.call(value, (v) => clean(v, level));
         } else if (isA(value, 'Array')) {
-            return value.map(clean);
+            return value.map((v) => clean(v, level));
         } else if (isA(value, 'Boolean') || isA(value, 'Number') || isA(value, 'String')) {
             return value;
+        } else if (value === null) {
+            return 'null';
+        } else if (value === undefined) {
+            return 'undefined';
         } else if (isA(value, 'Function')) {
             return 'function()';
         } else if (isA(value, 'Object')) {
             var cleanValue = {};
             Object.keys(value).forEach((key) => {
-                cleanValue[key] = clean(value[key]);
+                cleanValue[key] = clean(value[key], level);
             });
             return cleanValue;
         } else if (isA(value, 'Error')) {
@@ -56,7 +63,24 @@ function capture(objName)
                 fileName: value.fileName,
             };
         } else {
-            return Object.prototype.toString.call(value);
+            if (level >= 1)
+                return Object.prototype.toString.call(value);
+
+            var cleanValue = {'typeName': Object.prototype.toString.call(value).slice(8, -1)};
+            for (property in value) {
+                if (isA(value[property], 'Function'))
+                    continue;
+
+                var o = value;
+                while (!o.hasOwnProperty(property) && !isA(o, 'Object'))
+                    o = Object.getPrototypeOf(o);
+
+                var desc = Object.getOwnPropertyDescriptor(o, property);
+                if (desc.configurable)
+                    cleanValue[property] = clean(value[property], level + 1);
+            }
+
+            return cleanValue;
         }
     }
 
