@@ -141,6 +141,34 @@ class BaseTest(BrowserTestCase):
         self.assertEqual(len(capture), 1)
         self.checkCapture(capture[0], function, result, beforeTime, afterTime)
 
+    def testNull(self):
+        self.init(['null'], title='log null')
+
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
+
+        beforeTime = time.time()
+        self.action(['null'])
+        afterTime = time.time()
+
+        capture = self.browser.getConsoleCapture()
+        self.assertEqual(len(capture), 1)
+        self.checkCapture(capture[0], 'log', ['null'], beforeTime, afterTime)
+
+    def testUndefined(self):
+        self.init(['undefined'], title='log undefined')
+
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
+
+        beforeTime = time.time()
+        self.action(['undefined'])
+        afterTime = time.time()
+
+        capture = self.browser.getConsoleCapture()
+        self.assertEqual(len(capture), 1)
+        self.checkCapture(capture[0], 'log', ['undefined'], beforeTime, afterTime)
+
     @TestData([
         {'title': 'log 0',           'data': [0]      },
         {'title': 'log 1',           'data': [1]      },
