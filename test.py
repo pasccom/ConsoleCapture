@@ -105,7 +105,15 @@ class BaseTest(BrowserTestCase):
     columnNumber = 1
 
     def checkArguments(self, capturedArguments, expectedArguments):
-        self.assertEqual(capturedArguments, expectedArguments)
+        self.assertEqual(len(capturedArguments), len(expectedArguments))
+        for capturedArgument, expectedArgument in zip(capturedArguments, expectedArguments):
+            self.assertEqual(type(capturedArgument), type(expectedArgument))
+            if isinstance(expectedArgument, dict):
+                for k in expectedArgument:
+                    self.assertIn(k, capturedArgument)
+                    self.assertEqual(capturedArgument[k], expectedArgument[k])
+            else:
+                self.assertEqual(capturedArgument, expectedArgument)
 
     def checkCapture(self, callee, beforeTime, afterTime):
         capture = self.browser.getConsoleCapture()
@@ -289,6 +297,27 @@ class BaseTest(BrowserTestCase):
 
         beforeTime = time.time()
         self.action(formula)
+        afterTime = time.time()
+
+        capture = self.checkCapture('log', beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], result)
+
+    @TestData([
+        #{'title': 'log keydown',        'data': ['new KeyboardEvent("keydown", {"key": "X"})'],                                             'result': ['[object KeyboardEvent]'                                                                                                ]},
+        #{'title': 'log keyup',          'data': ['new KeyboardEvent("keyup",   {"key": "X"})'],                                             'result': ['[object KeyboardEvent]'                                                                                                ]},
+        #{'title': 'log keydown, keyup', 'data': ['new KeyboardEvent("keydown", {"key": "X"})', 'new KeyboardEvent("keyup", {"key": "X"})'], 'result': ['[object KeyboardEvent]', '[object KeyboardEvent]'                                                                      ]},
+        {'title': 'log keydown',        'data': ['new KeyboardEvent("keydown", {"key": "X"})'],                                             'result': [{'typeName': "KeyboardEvent", 'type': "keydown", 'key': "X"}                                                            ]},
+        {'title': 'log keyup',          'data': ['new KeyboardEvent("keyup",   {"key": "X"})'],                                             'result': [{'typeName': "KeyboardEvent", 'type': "keyup",   'key': "X"}                                                            ]},
+        {'title': 'log keydown, keyup', 'data': ['new KeyboardEvent("keydown", {"key": "X"})', 'new KeyboardEvent("keyup", {"key": "X"})'], 'result': [{'typeName': "KeyboardEvent", 'type': "keydown", 'key': "X"}, {'typeName': "KeyboardEvent", 'type': "keyup", 'key': "X"}]},
+    ])
+    def testComplexObjects(self, data, result, title=''):
+        self.init(data, title=title)
+
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
+
+        beforeTime = time.time()
+        self.action(data)
         afterTime = time.time()
 
         capture = self.checkCapture('log', beforeTime, afterTime)
