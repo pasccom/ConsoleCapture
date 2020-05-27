@@ -16,6 +16,7 @@
 # along with ConsoleCapture. If not, see <http://www.gnu.org/licenses/>
 
 from warnings import warn
+from selenium.common import exceptions as selenium
 
 class JavascriptPropertyDescriptor:
     def __init__(self, propertyName):
@@ -25,7 +26,19 @@ class JavascriptPropertyDescriptor:
         return obj.execute_script(f"return {self.__propertyName};")
 
     def __set__(self, obj, value=None):
-        obj.execute_script(f"{self.__propertyName} = {value};")
+        try:
+            obj.execute_script(f"{self.__propertyName} = {value};")
+        except selenium.JavascriptException as e:
+            jsError, sep, msg = e.msg.partition(': ')
+            if (jsError == 'TypeError'):
+                raise TypeError(msg)
+            elif (jsError == 'RangeError'):
+                raise ValueError(msg)
+            elif (jsError == 'ReferenceError'):
+                raise NameError(msg)
+            else:
+                raise
+
 
 def captureConsole(browser, xpiPath):
     """
