@@ -303,16 +303,17 @@ class BaseTest(BrowserTestCase):
         self.checkArguments(capture['arguments'], result)
 
     @TestData([
-        #{'title': 'log keydown',        'data': ['new KeyboardEvent("keydown", {"key": "X"})'],                                             'result': ['[object KeyboardEvent]'                                                                                                ]},
-        #{'title': 'log keyup',          'data': ['new KeyboardEvent("keyup",   {"key": "X"})'],                                             'result': ['[object KeyboardEvent]'                                                                                                ]},
-        #{'title': 'log keydown, keyup', 'data': ['new KeyboardEvent("keydown", {"key": "X"})', 'new KeyboardEvent("keyup", {"key": "X"})'], 'result': ['[object KeyboardEvent]', '[object KeyboardEvent]'                                                                      ]},
-        {'title': 'log keydown',        'data': ['new KeyboardEvent("keydown", {"key": "X"})'],                                             'result': [{'typeName': "KeyboardEvent", 'type': "keydown", 'key': "X"}                                                            ]},
-        {'title': 'log keyup',          'data': ['new KeyboardEvent("keyup",   {"key": "X"})'],                                             'result': [{'typeName': "KeyboardEvent", 'type': "keyup",   'key': "X"}                                                            ]},
-        {'title': 'log keydown, keyup', 'data': ['new KeyboardEvent("keydown", {"key": "X"})', 'new KeyboardEvent("keyup", {"key": "X"})'], 'result': [{'typeName': "KeyboardEvent", 'type': "keydown", 'key': "X"}, {'typeName': "KeyboardEvent", 'type': "keyup", 'key': "X"}]},
+        {'title': 'log keydown',        'depth': 0, 'data': ['new KeyboardEvent("keydown", {"key": "X"})'],                                             'result': ['[object KeyboardEvent]'                                                                                                ]},
+        {'title': 'log keyup',          'depth': 0, 'data': ['new KeyboardEvent("keyup",   {"key": "X"})'],                                             'result': ['[object KeyboardEvent]'                                                                                                ]},
+        {'title': 'log keydown, keyup', 'depth': 0, 'data': ['new KeyboardEvent("keydown", {"key": "X"})', 'new KeyboardEvent("keyup", {"key": "X"})'], 'result': ['[object KeyboardEvent]', '[object KeyboardEvent]'                                                                      ]},
+        {'title': 'log keydown',        'depth': 1, 'data': ['new KeyboardEvent("keydown", {"key": "X"})'],                                             'result': [{'typeName': "KeyboardEvent", 'type': "keydown", 'key': "X"}                                                            ]},
+        {'title': 'log keyup',          'depth': 1, 'data': ['new KeyboardEvent("keyup",   {"key": "X"})'],                                             'result': [{'typeName': "KeyboardEvent", 'type': "keyup",   'key': "X"}                                                            ]},
+        {'title': 'log keydown, keyup', 'depth': 1, 'data': ['new KeyboardEvent("keydown", {"key": "X"})', 'new KeyboardEvent("keyup", {"key": "X"})'], 'result': [{'typeName': "KeyboardEvent", 'type': "keydown", 'key': "X"}, {'typeName': "KeyboardEvent", 'type': "keyup", 'key': "X"}]},
     ])
-    def testComplexObjects(self, data, result, title=''):
+    def testComplexObjects(self, depth, data, result, title=''):
         self.init(data, title=title)
 
+        self.browser.captureDepth = depth
         self.browser.clearConsoleCapture()
         self.assertEqual(self.browser.getConsoleCapture(), [])
 

@@ -27,6 +27,9 @@
  */
 function capture(objName)
 {
+    var captured = [];
+    var captureDepth = 0;
+
     function isA(value, typeName)
     {
         return Object.prototype.toString.call(value) == '[object ' + typeName + ']'
@@ -63,7 +66,7 @@ function capture(objName)
                 fileName: value.fileName,
             };
         } else {
-            if (level >= 1)
+            if (level >= captureDepth)
                 return Object.prototype.toString.call(value);
 
             var cleanValue = {'typeName': Object.prototype.toString.call(value).slice(8, -1)};
@@ -83,8 +86,6 @@ function capture(objName)
             return cleanValue;
         }
     }
-
-    var captured = [];
 
     var obj = window[objName];
     var newObj = {
@@ -127,6 +128,18 @@ function capture(objName)
     });
 
     window.wrappedJSObject[objName] = cloneInto(newObj, window, {cloneFunctions: true});
+
+    Object.defineProperty(window.wrappedJSObject[objName].capture, 'depth', {
+        enumerable: true,
+        get: cloneInto(() => captureDepth, window, {cloneFunctions: true}),
+        set: cloneInto((d) => {
+            if (!Number.isInteger(d))
+                throw new TypeError("Capure depth must be an integer");
+            if (d < 0)
+                throw new RangeError("Capure depth must be non-negative");
+            captureDepth = d;
+        }, window, {cloneFunctions: true}),
+    });
 }
 
 capture('console');

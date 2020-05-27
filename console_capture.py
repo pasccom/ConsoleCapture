@@ -17,6 +17,16 @@
 
 from warnings import warn
 
+class JavascriptPropertyDescriptor:
+    def __init__(self, propertyName):
+        self.__propertyName = propertyName
+
+    def __get__(self, obj, owner=None):
+        return obj.execute_script(f"return {self.__propertyName};")
+
+    def __set__(self, obj, value=None):
+        obj.execute_script(f"{self.__propertyName} = {value};")
+
 def captureConsole(browser, xpiPath):
     """
         Install **ConsoleCapture** on the given WebDriver
@@ -24,7 +34,8 @@ def captureConsole(browser, xpiPath):
         Call this function to install **ConsoleCapture** on a WebDriver.
         After having called this function, you will be able to get the capture
         using ``browser.getConsoleCapture()`` and clear it using
-        ``browser.clearConsoleCapture()``
+        ``browser.clearConsoleCapture()`` and access the capture depth using
+        the ``captureDepth`` property.
 
         *Note*: You should provide a non-``None`` profile when initializing the
         WebDriver, unless you use a signed extension.
@@ -46,3 +57,4 @@ def captureConsole(browser, xpiPath):
 
     setattr(browser, 'getConsoleCapture', lambda: browser.execute_script('return console.capture.get();'))
     setattr(browser, 'clearConsoleCapture', lambda: browser.execute_script('console.capture.clear();'))
+    setattr(type(browser), 'captureDepth', JavascriptPropertyDescriptor('console.capture.depth'))
