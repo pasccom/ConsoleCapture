@@ -17,4 +17,4 @@
 # along with ConsoleCapture. If not, see <http://www.gnu.org/licenses/>
 
 test -d dist || mkdir dist
-zip -r -FS dist/console_capture.xpi manifest.json capture_console.js
+zip -r -FS dist/console_capture.xpi manifest.json console_capture.js
