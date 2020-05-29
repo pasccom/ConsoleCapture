@@ -39,6 +39,24 @@ class JavascriptPropertyDescriptor:
             else:
                 raise
 
+class ConsoleCaptureDescriptor:
+    class __ConsoleCaptureDescriptor:
+        depth = JavascriptPropertyDescriptor('console.capture.depth')
+
+        def execute_script(self, script, *args):
+            return self.__obj.execute_script(script, *args)
+
+        def __init__(self, obj):
+            self.__obj = obj
+
+        def __call__(self):
+            return self.__obj.execute_script("return console.capture.get();")
+
+    def __get__(self, obj, owner=None):
+        return self.__ConsoleCaptureDescriptor(obj)
+
+    def __delete__(self, obj):
+        return obj.execute_script("return console.capture.clear();")
 
 def captureConsole(browser, xpiPath):
     """
@@ -46,9 +64,9 @@ def captureConsole(browser, xpiPath):
 
         Call this function to install **ConsoleCapture** on a WebDriver.
         After having called this function, you will be able to get the capture
-        using ``browser.getConsoleCapture()`` and clear it using
-        ``browser.clearConsoleCapture()`` and access the capture depth using
-        the ``captureDepth`` property.
+        using ``browser.consoleCapture()`` and clear it using
+        ``del browser.consoleCapture`` and access the capture depth using
+        ``browser.consoleCapture.depth`` property.
 
         *Note*: You should provide a non-``None`` profile when initializing the
         WebDriver, unless you use a signed extension.
@@ -68,6 +86,4 @@ def captureConsole(browser, xpiPath):
         warn("You should give non-None profile when initializing the WebDriver.", RuntimeWarning)
     print(browser.install_addon(xpiPath, False))
 
-    setattr(browser, 'getConsoleCapture', lambda: browser.execute_script('return console.capture.get();'))
-    setattr(browser, 'clearConsoleCapture', lambda: browser.execute_script('console.capture.clear();'))
-    setattr(type(browser), 'captureDepth', JavascriptPropertyDescriptor('console.capture.depth'))
+    setattr(type(browser), 'consoleCapture', ConsoleCaptureDescriptor())

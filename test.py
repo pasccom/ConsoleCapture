@@ -70,7 +70,7 @@ class BrowserTestCase(unittest.TestCase):
     def waitConsoleCapture(browser, t=-1):
         while (t != 0):
             try:
-                browser.clearConsoleCapture()
+                del browser.consoleCapture
                 return
             except(selenium.JavascriptException):
                 pass
@@ -116,7 +116,7 @@ class BaseTest(BrowserTestCase):
                 self.assertEqual(capturedArgument, expectedArgument)
 
     def checkCapture(self, callee, beforeTime, afterTime):
-        capture = self.browser.getConsoleCapture()
+        capture = self.browser.consoleCapture()
         self.assertEqual(len(capture), 1)
 
         self.assertEqual(capture[0]['callee'], callee)
@@ -145,8 +145,8 @@ class BaseTest(BrowserTestCase):
 
         self.init(data, function=function, title=title)
 
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(data, function=function)
@@ -158,8 +158,8 @@ class BaseTest(BrowserTestCase):
     def testNull(self):
         self.init(['null'], title='log null')
 
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(['null'])
@@ -171,8 +171,8 @@ class BaseTest(BrowserTestCase):
     def testUndefined(self):
         self.init(['undefined'], title='log undefined')
 
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(['undefined'])
@@ -200,8 +200,8 @@ class BaseTest(BrowserTestCase):
 
         self.init(data, title=title)
 
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(data)
@@ -223,8 +223,8 @@ class BaseTest(BrowserTestCase):
     def testFormulae(self, formula, result, title=''):
         self.init(formula, title=title)
 
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(formula)
@@ -247,8 +247,8 @@ class BaseTest(BrowserTestCase):
     def testArrays(self, formula, result, title=''):
         self.init(formula, title=title)
 
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(formula)
@@ -271,8 +271,8 @@ class BaseTest(BrowserTestCase):
     def testObjects(self, formula, result, title=''):
         self.init(formula, title=title)
 
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(formula)
@@ -292,8 +292,8 @@ class BaseTest(BrowserTestCase):
     def testFunctions(self, formula, result, title=''):
         self.init(formula, title=title)
 
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(formula)
@@ -306,9 +306,9 @@ class BaseTest(BrowserTestCase):
     def testElement(self, depth):
         self.init(['document.body'], title='body')
 
-        self.browser.captureDepth = depth
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        self.browser.consoleCapture.depth = depth
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(['document.body'])
@@ -328,9 +328,9 @@ class BaseTest(BrowserTestCase):
     def testComplexObjects(self, depth, data, result, title=''):
         self.init(data, title=title)
 
-        self.browser.captureDepth = depth
-        self.browser.clearConsoleCapture()
-        self.assertEqual(self.browser.getConsoleCapture(), [])
+        self.browser.consoleCapture.depth = depth
+        del self.browser.consoleCapture
+        self.assertEqual(self.browser.consoleCapture(), [])
 
         beforeTime = time.time()
         self.action(data)
@@ -463,20 +463,20 @@ class DepthTest(BrowserTestCase, metaclass=TestCase):
     @TestData([1, 10])
     def testSetDepth(self, depth):
         self.getIndex()
-        self.assertEqual(self.browser.captureDepth, 0)
+        self.assertEqual(self.browser.consoleCapture.depth, 0)
 
-        self.browser.captureDepth = depth
-        self.assertEqual(self.browser.captureDepth, depth)
+        self.browser.consoleCapture.depth = depth
+        self.assertEqual(self.browser.consoleCapture.depth, depth)
 
-        self.browser.captureDepth = 0
-        self.assertEqual(self.browser.captureDepth, 0)
+        self.browser.consoleCapture.depth = 0
+        self.assertEqual(self.browser.consoleCapture.depth, 0)
 
     @TestData(['v'])
     def testInvalid(self, depth):
         self.getIndex()
 
         with self.assertRaises(NameError) as e:
-            self.browser.captureDepth = depth
+            self.browser.consoleCapture.depth = depth
         self.assertEqual(e.exception.args[0], f"{depth} is not defined")
 
     @TestData(['true', 'false', 'null', 'undefined', '"str"', '[]', '{}'])
@@ -484,7 +484,7 @@ class DepthTest(BrowserTestCase, metaclass=TestCase):
         self.getIndex()
 
         with self.assertRaises(TypeError) as e:
-            self.browser.captureDepth = depth
+            self.browser.consoleCapture.depth = depth
         self.assertEqual(e.exception.args[0], "Capure depth must be an integer")
 
     @TestData([-1, -10])
@@ -492,7 +492,7 @@ class DepthTest(BrowserTestCase, metaclass=TestCase):
         self.getIndex()
 
         with self.assertRaises(ValueError) as e:
-            self.browser.captureDepth = depth
+            self.browser.consoleCapture.depth = depth
         self.assertEqual(e.exception.args[0], "Capure depth must be non-negative")
 
 if __name__ == '__main__':
