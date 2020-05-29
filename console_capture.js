@@ -66,6 +66,8 @@ function capture(objName)
                 fileName: value.fileName,
             };
         } else {
+            if ((value.nodeType == 1) && value.tagName)
+                return value;
             if (level >= captureDepth)
                 return Object.prototype.toString.call(value);
 
@@ -91,7 +93,7 @@ function capture(objName)
     var newObj = {
         capture: {
             get: () => {
-                return cloneInto(captured, window);
+                return cloneInto(captured, window, {wrapReflectors: true});
             },
             clear: () => {
                 captured = [];

@@ -302,6 +302,21 @@ class BaseTest(BrowserTestCase):
         capture = self.checkCapture('log', beforeTime, afterTime)
         self.checkArguments(capture['arguments'], result)
 
+    @TestData([0, 1, 10])
+    def testElement(self, depth):
+        self.init(['document.body'], title='body')
+
+        self.browser.captureDepth = depth
+        self.browser.clearConsoleCapture()
+        self.assertEqual(self.browser.getConsoleCapture(), [])
+
+        beforeTime = time.time()
+        self.action(['document.body'])
+        afterTime = time.time()
+
+        capture = self.checkCapture('log', beforeTime, afterTime)
+        self.checkArguments(capture['arguments'], [self.browser.find_element_by_tag_name('body')])
+
     @TestData([
         {'title': 'log keydown',        'depth': 0, 'data': ['new KeyboardEvent("keydown", {"key": "X"})'],                                             'result': ['[object KeyboardEvent]'                                                                                                ]},
         {'title': 'log keyup',          'depth': 0, 'data': ['new KeyboardEvent("keyup",   {"key": "X"})'],                                             'result': ['[object KeyboardEvent]'                                                                                                ]},
