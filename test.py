@@ -21,7 +21,6 @@ from PythonUtils.testdata import TestData
 from console_capture import captureConsole
 
 import os
-import time
 import unittest
 
 class TestCase(type):

@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ConsoleCapture. If not, see <http://www.gnu.org/licenses/>
 
+import time
+
 from warnings import warn
 from selenium.common import exceptions as selenium
 
