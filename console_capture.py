@@ -52,10 +52,20 @@ class ConsoleCaptureDescriptor:
         def __call__(self):
             return self.__obj.execute_script("return console.capture.get();")
 
+    @staticmethod
+    def __waitConsoleCapture(browser, t=-1):
+        while (t != 0) and browser.execute_script("return (console.capture === undefined);"):
+            time.sleep(1)
+            t = t - 1
+        if (t == 0):
+            raise RuntimeError("Timeout waiting for ConsoleCapture.")
+
     def __get__(self, obj, owner=None):
+        self.__waitConsoleCapture(obj, 5)
         return self.__ConsoleCaptureDescriptor(obj)
 
     def __delete__(self, obj):
+        self.__waitConsoleCapture(obj, 5)
         return obj.execute_script("return console.capture.clear();")
 
 def captureConsole(browser, xpiPath):
@@ -64,7 +74,7 @@ def captureConsole(browser, xpiPath):
 
         Call this function to install **ConsoleCapture** on a WebDriver.
         After having called this function, you will be able to get the capture
-        using ``browser.consoleCapture()`` and clear it using
+        using ``browser.consoleCapture()``, clear it using
         ``del browser.consoleCapture`` and access the capture depth using
         ``browser.consoleCapture.depth`` property.
 

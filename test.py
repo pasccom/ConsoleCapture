@@ -66,17 +66,6 @@ class BrowserTestCase(unittest.TestCase):
     def tearDownClass(cls):
         cls.browser.close()
 
-    @staticmethod
-    def waitConsoleCapture(browser, t=-1):
-        while (t != 0):
-            try:
-                del browser.consoleCapture
-                return
-            except(selenium.JavascriptException):
-                pass
-            time.sleep(1)
-            t = t - 1
-
     def setUp(self):
         self.browser = self.__class__.browser
 
@@ -96,7 +85,6 @@ class BrowserTestCase(unittest.TestCase):
             indexFile.write(self.__class__.index.format(title, script))
         self.url = 'file://' + indexFilePath
         self.browser.get(self.url)
-        self.__class__.waitConsoleCapture(self.browser, 5)
 
 class BaseTest(BrowserTestCase):
     caller = ''
