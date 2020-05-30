@@ -41,9 +41,9 @@ copyright = '2020, Pascal COMBES'
 author = 'Pascal COMBES'
 
 # The short X.Y version
-version = '1'
+version = '2'
 # The full version, including alpha/beta/rc tags
-release = '1.0'
+release = '2.0'
 
 
 # -- General configuration ---------------------------------------------------

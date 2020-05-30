@@ -3,7 +3,7 @@
 
     "name":         "Console capture",
     "description":  "Capture the console in Firefox",
-    "version":      "1.0",
+    "version":      "2.0",
     "applications": {
         "gecko": {
             "id":   "console_capture@pas.com"

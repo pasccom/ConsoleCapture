@@ -13,10 +13,11 @@ LICENSE file of this repository, or below for a short note).
 FEATURES
 --------
 
-Here is the list of the current features (included in version 1.0)
+Here is the list of the current features (included in version 2.0)
 - Capture calls to members with:
   - Arguments (basic types, arrays and objects are supported)
   - Caller name, file, line and column
+- Special handling of DOM elements so that they are returned as Selenium `WebElements`
 - Configure capture depth for complex objects (to avoid recusion loops).
 - Python wrapper to be used with Selenium.
 
