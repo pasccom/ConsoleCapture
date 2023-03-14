@@ -17,11 +17,17 @@
 
 from selenium import webdriver
 from selenium.common import exceptions as selenium
-from PythonUtils.testdata import TestData
-from console_capture import captureConsole
 
 import os
+import sys
+import time
 import unittest
+
+sys.path.append(os.path.dirname(__file__))
+print(os.path.dirname(__file__))
+
+from PythonUtils.testdata import TestData
+from console_capture import captureConsole
 
 class TestCase(type):
     __testCaseList = []
