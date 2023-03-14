@@ -92,10 +92,6 @@ def captureConsole(browser, xpiPath):
         warn("ConsoleCapture is alredy installed in this browser.", RuntimeWarning, stacklevel=2)
         return
 
-    if browser.profile is not None:
-        browser.profile.set_preference('xpinstall.signatures.required', False)
-    else:
-        warn("You should give non-None profile when initializing the WebDriver.", RuntimeWarning)
-    print(browser.install_addon(xpiPath, False))
+    print(browser.install_addon(xpiPath, True))
 
     setattr(type(browser), 'consoleCapture', ConsoleCaptureDescriptor())
