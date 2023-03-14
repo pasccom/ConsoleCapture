@@ -65,7 +65,7 @@ class BrowserTestCase(unittest.TestCase):
     def setUpClass(cls):
         cls.baseDir = os.path.dirname(os.path.abspath(__file__))
 
-        cls.browser = webdriver.Firefox(webdriver.FirefoxProfile())
+        cls.browser = webdriver.Firefox()
         captureConsole(cls.browser, os.path.join(cls.baseDir, 'dist/console_capture.xpi'))
 
     @classmethod
