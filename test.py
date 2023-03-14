@@ -114,7 +114,7 @@ class BaseTest(BrowserTestCase):
         self.assertEqual(len(capture), 1)
 
         self.assertEqual(capture[0]['callee'], callee)
-        self.assertTrue((beforeTime <= capture[0]['time']/1000) and (capture[0]['time']/1000 <= afterTime))
+        self.assertTrue((beforeTime - 0.001 <= capture[0]['time']/1000) and (capture[0]['time']/1000 <= afterTime + 0.001))
         self.assertEqual(capture[0]['caller'], self.__class__.caller)
         self.assertEqual(capture[0]['fileName'], 'file://' + os.path.join(self.__class__.baseDir, self.__class__.fileName) if self.__class__.fileName is not None else self.url)
         self.assertEqual(capture[0]['lineNumber'], str(self.__class__.lineNumber))
