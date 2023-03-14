@@ -17,6 +17,7 @@
 
 from selenium import webdriver
 from selenium.common import exceptions as selenium
+from selenium.webdriver.common.by import By
 
 import os
 import sys
@@ -308,7 +309,7 @@ class BaseTest(BrowserTestCase):
         afterTime = time.time()
 
         capture = self.checkCapture('log', beforeTime, afterTime)
-        self.checkArguments(capture['arguments'], [self.browser.find_element_by_tag_name('body')])
+        self.checkArguments(capture['arguments'], [self.browser.find_element(By.TAG_NAME, 'body')])
 
     @TestData([
         {'title': 'log keydown',        'depth': 0, 'data': ['new KeyboardEvent("keydown", {"key": "X"})'],                                             'result': ['[object KeyboardEvent]'                                                                                                ]},
@@ -404,7 +405,7 @@ class ClickTest(BaseTest, metaclass=TestCase):
         self.getIndex(self.__class__.javascript.format('console.{}({});'.format(function, ', '.join(data))), title)
 
     def action(self, *args, **kwargs):
-        self.browser.find_element_by_id('test').click()
+        self.browser.find_element(By.ID, 'test').click()
 
 class ClickFunctionTest(BaseTest, metaclass=TestCase):
     javascript = """<script type="text/javascript">
@@ -425,7 +426,7 @@ class ClickFunctionTest(BaseTest, metaclass=TestCase):
         self.getIndex(self.__class__.javascript.format('console.{}({});'.format(function, ', '.join(data))), title)
 
     def action(self, *args, **kwargs):
-        self.browser.find_element_by_id('test').click()
+        self.browser.find_element(By.ID, 'test').click()
 
 class ClickFileTest(BaseTest, metaclass=TestCase):
     caller = 'clickEvent'
@@ -450,7 +451,7 @@ class ClickFileTest(BaseTest, metaclass=TestCase):
         </script>""", title)
 
     def action(self, *args, **kwargs):
-        self.browser.find_element_by_id('test').click()
+        self.browser.find_element(By.ID, 'test').click()
 
 class DepthTest(BrowserTestCase, metaclass=TestCase):
     @TestData([1, 10])
